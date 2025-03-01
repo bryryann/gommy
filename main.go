@@ -2,11 +2,19 @@ package main
 
 import (
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/bryryann/gommy/config"
 
-	_ "github.com/bwmarrin/discordgo"
+	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
+)
+
+var (
+	BotId string
+	Bot   *discordgo.Session
 )
 
 func init() {
@@ -17,5 +25,14 @@ func init() {
 }
 
 func main() {
-	_ = config.ReadConfig()
+	_, err := config.ReadConfig()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sc
+
+	Bot.Close()
 }

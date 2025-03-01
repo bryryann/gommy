@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"errors"
+	"os"
+)
 
 type Config struct {
 	Token  string
@@ -11,20 +14,20 @@ var (
 	AppConfig Config
 )
 
-func ReadConfig() *Config {
-
+func ReadConfig() (*Config, error) {
 	token, ok := os.LookupEnv("TOKEN")
 	if !ok {
-		panic("Token mismatch.")
+		return nil, errors.New("Couldn't find token.")
+
 	}
 
 	prefix, ok := os.LookupEnv("BOT_PREFIX")
 	if !ok {
-		panic("Empty prefix.")
+		return nil, errors.New("Couldn't find appropriate bot prefix.")
 	}
 
 	AppConfig.Token = token
 	AppConfig.Prefix = prefix
 
-	return &AppConfig
+	return &AppConfig, nil
 }
