@@ -32,7 +32,9 @@ func main() {
 
 	config.AppConfig.BotID, Bot = config.StartBot(config.AppConfig.Token)
 
-	Bot.AddHandler(messages.MessageHandler)
+	// allow for command customization
+	messages.StrapMessage("ping", messages.Ping)
+	Bot.AddHandler(messages.InitHandler)
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)

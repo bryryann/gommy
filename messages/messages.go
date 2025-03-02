@@ -2,26 +2,37 @@ package messages
 
 import (
 	"log"
-	"time"
+	"unicode/utf8"
 
 	"github.com/bryryann/gommy/config"
 	"github.com/bwmarrin/discordgo"
 )
 
-func MessageHandler(sess *discordgo.Session, msg *discordgo.MessageCreate) {
+type handler func(*discordgo.MessageCreate) string
+
+var messages map[string]handler = make(map[string]handler)
+
+func StrapMessage(message string, h handler) {
+	messages[config.AppConfig.Prefix+message] = h
+}
+
+func InitHandler(sess *discordgo.Session, msg *discordgo.MessageCreate) {
 	if msg.Author.ID == config.AppConfig.BotID {
 		return
 	}
 
-	if msg.Content[:4] != config.AppConfig.Prefix {
+	if utf8.RuneCountInString(msg.Content) < 4 || msg.Content[:4] != config.AppConfig.Prefix {
 		return
 	}
 
-	if msg.Content == config.AppConfig.Prefix+"ping" {
-		_, err := sess.ChannelMessageSend(msg.ChannelID, "pong"+time.Since(msg.Timestamp).String())
-
+	handler, exists := messages[msg.Content]
+	if exists {
+		_, err := sess.ChannelMessageSend(msg.ChannelID, handler(msg))
 		if err != nil {
 			log.Fatal(err)
 		}
+	}
+
+	if msg.Content == config.AppConfig.Prefix+"ping" {
 	}
 }
