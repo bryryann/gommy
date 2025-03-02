@@ -32,7 +32,4 @@ func InitHandler(sess *discordgo.Session, msg *discordgo.MessageCreate) {
 			log.Fatal(err)
 		}
 	}
-
-	if msg.Content == config.AppConfig.Prefix+"ping" {
-	}
 }
