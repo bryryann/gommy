@@ -25,10 +25,12 @@ func init() {
 }
 
 func main() {
-	_, err := config.ReadConfig()
+	appConfig, err := config.ReadConfig()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	BotId, Bot = config.StartBot(appConfig.Token)
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)

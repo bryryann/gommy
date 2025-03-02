@@ -11,7 +11,7 @@ type Config struct {
 }
 
 var (
-	AppConfig Config
+	appConfig Config
 )
 
 func ReadConfig() (*Config, error) {
@@ -26,8 +26,8 @@ func ReadConfig() (*Config, error) {
 		return nil, errors.New("Couldn't find appropriate bot prefix.")
 	}
 
-	AppConfig.Token = token
-	AppConfig.Prefix = prefix
+	appConfig.Token = token
+	appConfig.Prefix = prefix
 
-	return &AppConfig, nil
+	return &appConfig, nil
 }
